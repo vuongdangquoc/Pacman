@@ -457,7 +457,7 @@ TilemapRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: -1
+  m_SortingOrder: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
   m_MaxChunkCount: 16
@@ -515,8 +515,13 @@ MonoBehaviour:
   walls: {fileID: 1348378472}
   pellets: {fileID: 420271611}
   wallTile: {fileID: 11400000, guid: 3f91a99181cc5fe4680bfa7580826b0e, type: 2}
-  pelletTile: {fileID: 11400000, guid: ffc83d5b62bc511479667acc6a2fd9fe, type: 2}
+  pelletTile: {fileID: 11400000, guid: d4ffeeef29eff2f4f9d4f2626667716e, type: 2}
   pacmanPrefab: {fileID: 2727860863316753928, guid: feec0d91ecd779f4e9fd3516dc7b3432, type: 3}
+  ghosts:
+  - {fileID: 4649407608831534491, guid: 8e036e4b2599f6743b6cc6deca979894, type: 3}
+  - {fileID: 3988496602362615269, guid: 571bfb41e96724a4e8ab15b715c578a2, type: 3}
+  - {fileID: 6338133243856198872, guid: 8cb52913910bfb349af5b608bb2f389a, type: 3}
+  - {fileID: 4834822113254625563, guid: 1aec576cb89939643aab75838403d59b, type: 3}
 --- !u!4 &554212928
 Transform:
   m_ObjectHideFlags: 0
@@ -1059,7 +1064,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   pacman: {fileID: 2929242373819039458, guid: feec0d91ecd779f4e9fd3516dc7b3432, type: 3}
-  pellets: {fileID: 7911446881350574611, guid: a16efd68c6dde044b83ff62e8bc01f2b, type: 3}
+  pellets: {fileID: 420271613}
 --- !u!4 &1695642971
 Transform:
   m_ObjectHideFlags: 0

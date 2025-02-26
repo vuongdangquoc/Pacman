@@ -2,12 +2,26 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager Instance { get; private set; }
     public Ghost[] ghosts;
     public Pacman pacman;
     public Transform pellets;
     public int ghostMultiplier { get; private set; } = 1;
     public int score {  get; private set; }
     public int lives { get; private set; }
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -121,5 +135,15 @@ public class GameManager : MonoBehaviour
     private void ResetGhostMultiplier()
     {
         ghostMultiplier = 1;
+    }
+
+    public void SetPacman(Pacman newPacman)
+    {
+        pacman = newPacman;
+    }
+
+    public void SetGhosts(Ghost[] newGhosts)
+    {
+        ghosts = newGhosts;
     }
 }

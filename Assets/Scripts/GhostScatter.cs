@@ -2,6 +2,10 @@ using UnityEngine;
 
 public class GhostScatter : GhostBehavior
 {
+    private void OnDisable()
+    {
+        ghost.chase.Enable();
+    }
     private void OnTriggerEnter2D(Collider2D collision)
     {
         Node node = collision.GetComponent<Node>();
