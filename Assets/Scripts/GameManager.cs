@@ -41,12 +41,12 @@ public class GameManager : MonoBehaviour
 
     private void ResetState() {
         ResetGhostMultiplier();
+        pacman.ResetState();
         for (int i = 0; i < ghosts.Length; i++)
         {
-            this.ghosts[i].gameObject.SetActive(true);
+            this.ghosts[i].ResetState();
         }
 
-        pacman.gameObject.SetActive(true);
     }
 
     private void GameOver()
@@ -71,7 +71,7 @@ public class GameManager : MonoBehaviour
     public void GhostEaten(Ghost ghost)
     {
         SetScore(this.score + ghost.points * this.ghostMultiplier);
-        ghostMultiplier++;
+        this.ghostMultiplier++;
     }
 
     public void PacmanEaten()
