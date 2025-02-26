@@ -1,10 +1,11 @@
 using UnityEngine;
 
-public class NewMonoBehaviourScript : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
     public Ghost[] ghosts;
     public Pacman pacman;
     public Transform pellets;
+    public int ghostMultiplier { get; private set; } = 1;
     public int score {  get; private set; }
     public int lives { get; private set; }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -39,6 +40,7 @@ public class NewMonoBehaviourScript : MonoBehaviour
     }
 
     private void ResetState() {
+        ResetGhostMultiplier();
         for (int i = 0; i < ghosts.Length; i++)
         {
             this.ghosts[i].gameObject.SetActive(true);
@@ -68,7 +70,8 @@ public class NewMonoBehaviourScript : MonoBehaviour
 
     public void GhostEaten(Ghost ghost)
     {
-        SetScore(this.score + ghost.points);
+        SetScore(this.score + ghost.points * this.ghostMultiplier);
+        ghostMultiplier++;
     }
 
     public void PacmanEaten()
@@ -85,5 +88,38 @@ public class NewMonoBehaviourScript : MonoBehaviour
         }
     }
 
-    
+    public void PelletEaten(Pellet pellet)
+    {
+        pellet.gameObject.SetActive(false);
+        SetScore(this.score + pellet.points);
+        if (!HasRemainingPelllets())
+        {
+            this.pacman.gameObject.SetActive(false);
+            Invoke(nameof(NewRoud), 3.0f);
+        }
+    }
+
+    public void PowerPelletEaten(PowerPellet pellet)
+    {
+        PelletEaten(pellet);
+        CancelInvoke();
+        Invoke(nameof(ResetGhostMultiplier), pellet.duration);
+    }
+
+    private bool HasRemainingPelllets()
+    {
+        foreach (Transform pellet in pellets)
+        {
+            if (pellet.gameObject.activeSelf)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void ResetGhostMultiplier()
+    {
+        ghostMultiplier = 1;
+    }
 }

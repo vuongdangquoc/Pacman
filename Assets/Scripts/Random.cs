@@ -24,7 +24,7 @@ public class MapGenerator : MonoBehaviour
     }
 
     // 1️⃣ Tạo mê cung ngẫu nhiên
-    void GenerateMap()
+    public void GenerateMap()
     {
         map = new int[width, height];
 
@@ -141,7 +141,7 @@ public class MapGenerator : MonoBehaviour
     }
 
     // 6️⃣ Vẽ bản đồ lên scene
-    void DrawMap()
+    public void DrawMap()
     {
         tilemap.ClearAllTiles(); // Xóa tile cũ trước khi vẽ mới
 
@@ -176,7 +176,7 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
-    void PlacePacman()
+    public void PlacePacman()
     {
         if (pelletPositions.Count > 0)
         {
