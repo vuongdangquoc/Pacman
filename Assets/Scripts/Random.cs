@@ -8,9 +8,10 @@ public class MapGenerator : MonoBehaviour
     public int width = 21;   // Chiều rộng (số lẻ để dễ tạo đối xứng)
     public int height = 21;  // Chiều cao (số lẻ để dễ tạo đối xứng)
 
-    public Tilemap tilemap;         // Tilemap chính
+    public Tilemap walls;         // Tilemap chính
+    public Tilemap pellets;         // Tilemap chính
     public Tile wallTile;           // Tile cho tường
-    public RuleTile pelletTile;         // Tile cho viên thức ăn
+    public Tile pelletTile;         // Tile cho viên thức ăn
     public GameObject pacmanPrefab;
     private List<Vector3> pelletPositions = new List<Vector3>();
 
@@ -143,7 +144,7 @@ public class MapGenerator : MonoBehaviour
     // 6️⃣ Vẽ bản đồ lên scene
     public void DrawMap()
     {
-        tilemap.ClearAllTiles(); // Xóa tile cũ trước khi vẽ mới
+        walls.ClearAllTiles(); // Xóa tile cũ trước khi vẽ mới
 
         for (int x = 0; x < width; x++)
         {
@@ -153,11 +154,11 @@ public class MapGenerator : MonoBehaviour
 
                 if (map[x, y] == 1)
                 {
-                    tilemap.SetTile(tilePosition, wallTile); // Đặt tường
+                    walls.SetTile(tilePosition, wallTile); // Đặt tường
                 }
                 else if (map[x, y] == 0)
                 {
-                    tilemap.SetTile(tilePosition, pelletTile); // Đặt thức ăn
+                    pellets.SetTile(tilePosition, pelletTile); // Đặt thức ăn
                     pelletPositions.Add(tilePosition);
                 }
             }
@@ -182,7 +183,7 @@ public class MapGenerator : MonoBehaviour
         {
             Vector3Int pacmanTilePos = Vector3Int.FloorToInt(pelletPositions[Random.Range(0, pelletPositions.Count)]);
 
-            tilemap.SetTile(pacmanTilePos, null);
+            walls.SetTile(pacmanTilePos, null);
 
             pelletPositions.Remove(pacmanTilePos);
 
