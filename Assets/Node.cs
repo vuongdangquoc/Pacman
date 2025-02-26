@@ -16,11 +16,6 @@ public class Node : MonoBehaviour
         CheckAvailableDirections(Vector2.right);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     private void CheckAvailableDirections(Vector2 direction)
     {
