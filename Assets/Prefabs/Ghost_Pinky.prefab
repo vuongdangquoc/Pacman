@@ -104,6 +104,10 @@ PrefabInstance:
       propertyPath: initialDirection.y
       value: -1
       objectReference: {fileID: 0}
+    - target: {fileID: 5252473583687102283, guid: 4017d83d8dd6553488ebc4353300ce8c, type: 3}
+      propertyPath: obstacleLayer.m_Bits
+      value: 512
+      objectReference: {fileID: 0}
     - target: {fileID: 7150146822743600312, guid: 4017d83d8dd6553488ebc4353300ce8c, type: 3}
       propertyPath: target
       value: 

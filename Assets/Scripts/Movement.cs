@@ -56,7 +56,6 @@ public class Movement : MonoBehaviour
         }
         else
         {
-            Debug.Log(direction);
             nextDirection = direction;
         }
     }
