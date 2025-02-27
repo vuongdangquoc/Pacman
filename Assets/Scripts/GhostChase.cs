@@ -37,5 +37,4 @@ public class GhostChase : GhostBehavior
             ghost.movement.SetDirection(direction);
         }
     }
-
 }

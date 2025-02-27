@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEditor.Rendering;
 using UnityEngine.Tilemaps;
+using UnityEngine.UIElements;
 
 public class MapGenerator : MonoBehaviour
 {
@@ -9,11 +10,15 @@ public class MapGenerator : MonoBehaviour
     public int height = 21;  // Chiều cao (số lẻ để dễ tạo đối xứng)
 
     public Tilemap walls;         // Tilemap chính
-    public Tilemap pellets;         // Tilemap chính
+    public Tilemap pellets;         // Tilemap pellet
+    public Tilemap nodes;         // Tilemap pellet
+
     public Tile wallTile;           // Tile cho tường
-    public Tile pelletTile;         // Tile cho viên thức ăn
+    public RuleTile pelletTile;         // Tile cho viên thức ăn
+    public RuleTile node;
     public GameObject pacmanPrefab;
     private List<Vector3> pelletPositions = new List<Vector3>();
+    public Ghost[] ghosts;
 
     private int[,] map; // 0 = đường đi, 1 = tường
 
@@ -22,6 +27,8 @@ public class MapGenerator : MonoBehaviour
         GenerateMap();
         DrawMap();
         PlacePacman();
+        PlaceNodes();
+        PlaceGhosts();
     }
 
     // 1️⃣ Tạo mê cung ngẫu nhiên
@@ -177,6 +184,7 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
+    //tim diem dat pacman
     public void PlacePacman()
     {
         if (pelletPositions.Count > 0)
@@ -187,8 +195,76 @@ public class MapGenerator : MonoBehaviour
 
             pelletPositions.Remove(pacmanTilePos);
 
-            Instantiate(pacmanPrefab, pacmanTilePos + new Vector3(0.5f, 0.5f, 0), Quaternion.identity);
+            var newPacman= Instantiate(pacmanPrefab, pacmanTilePos + new Vector3(0.5f, 0.5f, 0), Quaternion.identity);
+            GameManager.Instance.SetPacman(newPacman.GetComponent<Pacman>());
         }
     }
 
+    // tim diem dat ghost
+    public void PlaceGhosts()
+    {
+        Vector3 blinky = new Vector3(11.48f, 10.6f, 0);
+        Vector3 clyde = new Vector3(9.45f, 9.51f, 0);
+        Vector3 inky = new Vector3(10.48f, 9.51f, 0);
+        Vector3 pinky = new Vector3(11.51f, 9.51f, 0);
+
+        var b= Instantiate(ghosts[0], blinky, Quaternion.identity);
+        var c= Instantiate(ghosts[1], clyde, Quaternion.identity);
+        var i=Instantiate(ghosts[2], inky, Quaternion.identity);
+        var p =Instantiate(ghosts[3], pinky, Quaternion.identity);
+        Ghost[] newGhosts = new Ghost[] { b, c, i, p };
+        GameManager.Instance.SetGhosts(newGhosts);
+    }
+
+    //tim diem dat node
+    public void PlaceNodes()
+    {
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                if (map[x,y] != 1)
+                {
+                    Vector3Int position = new Vector3Int(x, y, 0);
+
+                    // Kiểm tra nếu vị trí là ngã ba/ngã tư
+                    if (IsIntersection(position))
+                    {
+                        Debug.Log("hello");
+                        nodes.SetTile(position, node);
+                    }
+                }
+                
+            }
+        }
+    }
+
+    // Kiểm tra xem vị trí có phải ngã ba/ngã tư không
+    private bool IsIntersection(Vector3Int position)
+    {
+        if (map[position.x + 1, position.y] != 1)
+        {
+            if(map[position.x , position.y+1] != 1)
+            {
+                return true;
+            }
+            else if (map[position.x, position.y -1 ] != 1)
+            {
+                return true;
+            }
+        }
+
+        if (map[position.x -1 , position.y] != 1)
+        {
+            if (map[position.x, position.y + 1] != 1)
+            {
+                return true;
+            }
+            else if (map[position.x, position.y - 1] != 1)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 }
