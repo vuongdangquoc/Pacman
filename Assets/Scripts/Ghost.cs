@@ -30,32 +30,33 @@ public class Ghost : MonoBehaviour
         scatter = GetComponent<GhostScatter>();
         chase = GetComponent<GhostChase>();
         frightened = GetComponent<GhostFrightened>();
-
-        
-    }
-
-    public void ResetState()
-    {
-        this.gameObject.SetActive(true);
-        this.movement.ResetState();
-        this.frightened.Disable();
-        this.chase.Disable();
-        this.scatter.Enable();
-        if (this.home != this.initialBehavior)
-        {
-            this.home.Disable();
-        }
-
-        if(this.initialBehavior != null)
-        {
-            this.initialBehavior.Enable();
-        }
     }
 
     private void Start()
     {
         ResetState();
     }
+
+    public void ResetState()
+    {
+        gameObject.SetActive(true);
+        movement.ResetState();
+
+        frightened.Disable();
+        chase.Disable();
+        scatter.Enable();
+
+        if (home != initialBehavior)
+        {
+            home.Disable();
+        }
+
+        if (initialBehavior != null)
+        {
+            initialBehavior.Enable();
+        }
+    }
+
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -73,4 +74,11 @@ public class Ghost : MonoBehaviour
         }
     }
 
+
+    public void SetPosition(Vector3 position)
+    {
+        // Keep the z-position the same since it determines draw depth
+        position.z = transform.position.z;
+        transform.position = position;
+    }
 }
