@@ -10,5 +10,6 @@ public class Passage : MonoBehaviour
         position.y = connection.position.y;
 
         collision.transform.position = position;
+
     }
 }

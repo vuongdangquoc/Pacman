@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class Movement : MonoBehaviour
@@ -7,16 +7,21 @@ public class Movement : MonoBehaviour
     public float speedMultiplier = 1.0f;
     public Vector2 initialDirection;
     public LayerMask obstacleLayer;
-    public new Rigidbody2D rigidbody {  get; private set; }
+    public new Rigidbody2D rigidbody { get; private set; }
     public Vector2 direction { get; private set; }
     public Vector2 nextDirection { get; private set; }
     public Vector3 startingPosition { get; private set; }
+    private Vector2 lastPosition; // Lưu vị trí cũ
+    private readonly Vector2[] possibleDirections = { Vector2.up, Vector2.down, Vector2.left, Vector2.right };
+
+    public bool isGhost = false; // Xác định xem có phải ghost không
+
     private void Awake()
     {
         rigidbody = GetComponent<Rigidbody2D>();
         startingPosition = transform.position;
     }
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+
     void Start()
     {
         ResetState();
@@ -28,12 +33,13 @@ public class Movement : MonoBehaviour
         direction = initialDirection;
         nextDirection = Vector2.zero;
         transform.position = startingPosition;
+        lastPosition = rigidbody.position; // Lưu vị trí ban đầu
         enabled = true;
     }
-    // Update is called once per frame
+
     void Update()
     {
-        if(this.nextDirection != Vector2.zero)
+        if (this.nextDirection != Vector2.zero)
         {
             SetDirection(nextDirection);
         }
@@ -43,11 +49,19 @@ public class Movement : MonoBehaviour
     {
         Vector2 position = rigidbody.position;
         Vector2 translation = direction * speed * speedMultiplier;
-        
-        this.rigidbody.MovePosition(position+translation);
+
+        rigidbody.MovePosition(position + translation);
+
+        // Chỉ áp dụng cho Ghost: nếu vị trí không thay đổi, thử quay đầu hoặc chọn hướng khác
+        if (isGhost && (Vector2)transform.position == lastPosition)
+        {
+            TryChangeDirection();
+        }
+
+        lastPosition = transform.position; // Cập nhật vị trí cuối
     }
 
-    public void SetDirection(Vector2 direction, bool force  = false)
+    public void SetDirection(Vector2 direction, bool force = false)
     {
         if (force || !Occupied(direction))
         {
@@ -64,5 +78,27 @@ public class Movement : MonoBehaviour
     {
         RaycastHit2D hit = Physics2D.BoxCast(transform.position, Vector2.one * 0.75f, 0.0f, direction, 1.5f, obstacleLayer);
         return hit.collider != null;
-    } 
+    }
+
+    private void TryChangeDirection()
+    {
+        Vector2 reverseDirection = -direction; // Quay đầu lại
+
+        // Nếu quay đầu không bị chặn thì quay đầu
+        if (!Occupied(reverseDirection))
+        {
+            SetDirection(reverseDirection, true);
+            return;
+        }
+
+        // Nếu quay đầu bị chặn, thử hướng khác
+        foreach (var dir in possibleDirections)
+        {
+            if (dir != direction && dir != reverseDirection && !Occupied(dir)) // Tránh đi tiếp hướng cũ hoặc quay đầu bị chặn
+            {
+                SetDirection(dir, true);
+                break;
+            }
+        }
+    }
 }

@@ -2,28 +2,34 @@
 using System.Collections.Generic;
 using UnityEditor.Rendering;
 using UnityEngine.Tilemaps;
+using UnityEngine.UIElements;
 
 public class MapGenerator : MonoBehaviour
 {
-    public int width = 21;   // Chiều rộng (số lẻ để dễ tạo đối xứng)
-    public int height = 21;  // Chiều cao (số lẻ để dễ tạo đối xứng)
+    public int width = 31;   // Chiều rộng (số lẻ để dễ tạo đối xứng)
+    public int height = 31;  // Chiều cao (số lẻ để dễ tạo đối xứng)
 
     public Tilemap walls;         // Tilemap chính
-    public Tilemap pellets;         // Tilemap chính
+    public Tilemap pellets;         // Tilemap pellet
+    public Tilemap nodes;         // Tilemap pellet
+
     public Tile wallTile;           // Tile cho tường
-    public Tile pelletTile;         // Tile cho viên thức ăn
+    public RuleTile pelletTile;         // Tile cho viên thức ăn
+    public RuleTile node;
     public GameObject pacmanPrefab;
     private List<Vector3> pelletPositions = new List<Vector3>();
-
+    public Ghost[] ghosts;
     private int[,] map; // 0 = đường đi, 1 = tường
 
     void Start()
     {
         GenerateMap();
+        PlaceGhostHouse();
         DrawMap();
         PlacePacman();
+        PlaceNodes();
+        
     }
-
     // 1️⃣ Tạo mê cung ngẫu nhiên
     public void GenerateMap()
     {
@@ -34,51 +40,35 @@ public class MapGenerator : MonoBehaviour
             for (int y = 0; y < height; y++)
                 map[x, y] = 1;
 
-        // //ghost house (8,8) (8,10) (12,8) (12,12)
-        map[8, 8] = 1;
-        map[8, 10] = 1;
-        map[12, 8] = 1;
-        map[12, 12] = 1;
-
         // Tạo đường đi bằng thuật toán đệ quy
         CarvePath(1, 1);
 
         // Đối xứng bản đồ để tạo cảm giác quen thuộc như Pac-Man
         MirrorMap();
 
-        for (int j = 0;j < height; j++)
+        for (int j = 0; j < height; j++)
         {
             map[0, j] = 1;
-            map[20, j] = 1;
+            map[30, j] = 1;
         }
 
         for (int i = 0; i < height; i++)
         {
             map[i, 0] = 1;
-            map[i, 20] = 1;
+            map[i, 30] = 1;
         }
 
-        for (int j = 1; j < height-1; j++)
+        for (int j = 1; j < height - 1; j++)
         {
             map[1, j] = 0;
-            map[19, j] = 0;
+            map[29, j] = 0;
         }
         for (int j = 1; j < height - 1; j++)
         {
-            map[j, 19] = 0;
-        }
-
-        //ghost house
-        for (int i = 7; i<=13; i++)
-        for(int j = 7; j<=11; j++)
-        {
-                map[i, j] = 2;
-                if (((i >=8 && i<=12) &&(j ==8 || j ==10)) || (i ==8 && j ==9) || (i == 12 && j == 9))
-                {
-                    map[i, j] = 1;
-                }
-        }
-        map[10, 10] = 2;
+            map[j, 29] = 0;
+        }     
+        
+        PlaceGhostHouse();
 
     }
 
@@ -89,7 +79,7 @@ public class MapGenerator : MonoBehaviour
 
         // Hướng di chuyển: lên, xuống, trái, phải (random thứ tự)
 
-       
+
         List<Vector2Int> directions = new List<Vector2Int>
         {
             new Vector2Int(0, 2),
@@ -110,17 +100,17 @@ public class MapGenerator : MonoBehaviour
             int ny = y + dir.y;
             if (IsInBounds(nx, ny) && map[nx, ny] == 1)
             {
-                if (Random.Range(0, 100) <60)
+                if (Random.Range(0, 100) < 60)
                 {
                     map[x + dir.x / 2, y + dir.y / 2] = 0;
                 }
-                    map[nx, ny + addMore[0].y] = 0;
-                    map[nx + addMore[1].x, ny] = 0;
-                CarvePath(nx, ny);                   
+                map[nx, ny + addMore[0].y] = 0;
+                map[nx + addMore[1].x, ny] = 0;
+                CarvePath(nx, ny);
             }
         }
 
-            
+
     }
 
     // 4️⃣ Kiểm tra giới hạn bản đồ
@@ -145,7 +135,7 @@ public class MapGenerator : MonoBehaviour
     public void DrawMap()
     {
         walls.ClearAllTiles(); // Xóa tile cũ trước khi vẽ mới
-
+        pellets.ClearAllTiles();
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
@@ -177,18 +167,90 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
+    //tim diem dat pacman
     public void PlacePacman()
     {
         if (pelletPositions.Count > 0)
         {
             Vector3Int pacmanTilePos = Vector3Int.FloorToInt(pelletPositions[Random.Range(0, pelletPositions.Count)]);
-
             walls.SetTile(pacmanTilePos, null);
-
             pelletPositions.Remove(pacmanTilePos);
-
-            Instantiate(pacmanPrefab, pacmanTilePos + new Vector3(0.5f, 0.5f, 0), Quaternion.identity);
+            Debug.Log(pacmanTilePos);
+            var newPacman = Instantiate(pacmanPrefab, pacmanTilePos + new Vector3(0.5f, 0.5f, 0), Quaternion.identity);
+            GameManager.Instance.SetPacman(newPacman.GetComponent<Pacman>());
+            foreach (Ghost ghost in ghosts)
+            {
+                ghost.SetPacman(newPacman);
+            }
         }
     }
 
+
+    //ghost house
+    public void PlaceGhostHouse()
+    {
+        //ghost house
+        for (int j = 12; j <= 17; j++)
+            for (int i = 12; i <= 18; i++)
+            {
+                map[i, j] = 2;
+                if (((i >= 13 && i <= 17) && (j == 13 || j == 16)) || ((j == 14 || j == 15) && (i == 13 || i == 17)))
+                {
+                    map[i, j] = 1;
+                }
+            }
+    }
+
+    //tim diem dat node
+    public void PlaceNodes()
+    {
+        nodes.ClearAllTiles();
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                    if (map[x, y] != 1)
+                    {
+                        Vector3Int position = new Vector3Int(x, y, 0);
+
+                        // Kiểm tra nếu vị trí là ngã ba/ngã tư
+                        if (IsIntersection(position))
+                        {
+                            nodes.SetTile(position, node);                          
+                        }
+
+                    }
+
+            }
+        }
+    }
+
+    // Kiểm tra xem vị trí có phải ngã re
+    private bool IsIntersection(Vector3Int position)
+    {
+        if (map[position.x + 1, position.y] != 1)
+        {
+            if (map[position.x, position.y + 1] != 1)
+            {
+                return true;
+            }
+            else if (map[position.x, position.y - 1] != 1)
+            {
+                return true;
+            }
+        }
+
+        if (map[position.x - 1, position.y] != 1)
+        {
+            if (map[position.x, position.y + 1] != 1)
+            {
+                return true;
+            }
+            else if (map[position.x, position.y - 1] != 1)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 }

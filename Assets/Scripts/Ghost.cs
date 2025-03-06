@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Ghost : MonoBehaviour
@@ -15,7 +16,6 @@ public class Ghost : MonoBehaviour
 
     //target muon duoi theo
     public Transform target;
-
 
     // Update is called once per frame
     void Update()
@@ -73,8 +73,10 @@ public class Ghost : MonoBehaviour
             }
         }
     }
-
-
+    public void SetPacman(GameObject pacman)
+    {
+        target = pacman.transform;
+    }
     public void SetPosition(Vector3 position)
     {
         // Keep the z-position the same since it determines draw depth

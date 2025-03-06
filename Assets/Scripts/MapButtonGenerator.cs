@@ -3,8 +3,8 @@ using UnityEngine.UI;
 
 public class MapButtonController : MonoBehaviour
 {
-    public Button createButton; // Tham chiếu đến button
-    public MapGenerator mapGenerator; // Tham chiếu đến script MapGenerator
+    public Button createButton; 
+    public MapGenerator mapGenerator;
 
     void Start()
     {
@@ -15,6 +15,6 @@ public class MapButtonController : MonoBehaviour
     {
         mapGenerator.GenerateMap();
         mapGenerator.DrawMap();
-        mapGenerator.PlacePacman();
+        mapGenerator.PlaceNodes();
     }
 }
