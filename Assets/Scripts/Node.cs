@@ -23,7 +23,6 @@ public class Node : MonoBehaviour
 
         if (hit.collider == null)
         {
-            Debug.Log(direction);
             this.availableDirections.Add(direction);
         } 
     }

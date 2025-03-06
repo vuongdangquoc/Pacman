@@ -8,6 +8,7 @@ public abstract class GhostBehavior : MonoBehaviour
 
     private void Awake()
     {
+
         ghost = GetComponent<Ghost>();
     }
 

@@ -10,7 +10,6 @@ public class GhostScatter : GhostBehavior
     private void OnTriggerEnter2D(Collider2D other)
     {
         Node node = other.GetComponent<Node>();
-        Debug.Log(node.availableDirections.Count);
         // Do nothing while the ghost is frightened
         if (node != null && enabled && !ghost.frightened.enabled)
         {
@@ -29,8 +28,6 @@ public class GhostScatter : GhostBehavior
                     index = 0;
                 }
             }
-            Debug.Log(index);
-            Debug.Log(node.availableDirections[index]);
             ghost.movement.SetDirection(node.availableDirections[index]);
         }
     }

@@ -3036,7 +3036,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ghosts:
-  - {fileID: 0}
+  - {fileID: 1988247152}
   - {fileID: 1824150692}
   - {fileID: 934603009}
   - {fileID: 2021566137}
@@ -10081,6 +10081,17 @@ TilemapCollider2D:
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3988496602362615269, guid: 571bfb41e96724a4e8ab15b715c578a2, type: 3}
   m_PrefabInstance: {fileID: 479186569}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1a1ca99b593433479127e65709c2b37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1988247152 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4649407608831534491, guid: 8e036e4b2599f6743b6cc6deca979894, type: 3}
+  m_PrefabInstance: {fileID: 1253338815}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1

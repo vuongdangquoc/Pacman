@@ -20,7 +20,6 @@ public class GhostChase : GhostBehavior
             // Find the available direction that moves closet to pacman
             foreach (Vector2 availableDirection in node.availableDirections)
             {
-                Debug.Log("Cac huong hop le :  "+availableDirection);
                 // If the distance in this direction is less than the current
                 // min distance then this direction becomes the new closest
                 Vector3 newPosition = transform.position + new Vector3(availableDirection.x, availableDirection.y);
@@ -33,7 +32,6 @@ public class GhostChase : GhostBehavior
                 }
             }
 
-            Debug.Log(direction);
             ghost.movement.SetDirection(direction);
         }
     }

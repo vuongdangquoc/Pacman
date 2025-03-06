@@ -384,7 +384,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!58 &8946469430238020601
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -480,6 +480,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   duration: 0
+  inside: {fileID: 0}
+  outside: {fileID: 0}
 --- !u!114 &7383877879055477273
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -493,6 +495,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   duration: 8
+  body: {fileID: 2124605776018915883}
+  eyes: {fileID: 1072174864960395948}
+  blue: {fileID: 6013315952471693921}
+  white: {fileID: 3366921925672461642}
 --- !u!114 &8162142632395544047
 MonoBehaviour:
   m_ObjectHideFlags: 0
