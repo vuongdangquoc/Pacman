@@ -10,17 +10,15 @@ public class GhostChase : GhostBehavior
     private void OnTriggerEnter2D(Collider2D other)
     {
         Node node = other.GetComponent<Node>();
-
         // Do nothing while the ghost is frightened
         if (node != null && enabled && !ghost.frightened.enabled)
         {
+
             Vector2 direction = Vector2.zero;
             float minDistance = float.MaxValue;
-
             // Find the available direction that moves closet to pacman
             foreach (Vector2 availableDirection in node.availableDirections)
             {
-                Debug.Log("Cac huong hop le :  "+availableDirection);
                 // If the distance in this direction is less than the current
                 // min distance then this direction becomes the new closest
                 Vector3 newPosition = transform.position + new Vector3(availableDirection.x, availableDirection.y);
@@ -33,7 +31,7 @@ public class GhostChase : GhostBehavior
                 }
             }
 
-            Debug.Log(direction);
+            Debug.Log(ghost + "huong di" + ghost.movement.direction);
             ghost.movement.SetDirection(direction);
         }
     }

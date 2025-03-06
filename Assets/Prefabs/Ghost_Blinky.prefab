@@ -22,15 +22,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 623493809897849712, guid: 4017d83d8dd6553488ebc4353300ce8c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 15.6
       objectReference: {fileID: 0}
     - target: {fileID: 623493809897849712, guid: 4017d83d8dd6553488ebc4353300ce8c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 16.52
       objectReference: {fileID: 0}
     - target: {fileID: 623493809897849712, guid: 4017d83d8dd6553488ebc4353300ce8c, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 623493809897849712, guid: 4017d83d8dd6553488ebc4353300ce8c, type: 3}
       propertyPath: m_LocalRotation.w
@@ -97,6 +97,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5079858551544190348, guid: 4017d83d8dd6553488ebc4353300ce8c, type: 3}
+      propertyPath: m_Constraints
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5079858551544190348, guid: 4017d83d8dd6553488ebc4353300ce8c, type: 3}
       propertyPath: m_CollisionDetection
       value: 0
       objectReference: {fileID: 0}
@@ -106,7 +110,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5252473583687102283, guid: 4017d83d8dd6553488ebc4353300ce8c, type: 3}
       propertyPath: initialDirection.x
-      value: -1
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5252473583687102283, guid: 4017d83d8dd6553488ebc4353300ce8c, type: 3}
+      propertyPath: initialDirection.y
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5252473583687102283, guid: 4017d83d8dd6553488ebc4353300ce8c, type: 3}
       propertyPath: obstacleLayer.m_Bits

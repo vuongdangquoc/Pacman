@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class Movement : MonoBehaviour
@@ -58,11 +58,12 @@ public class Movement : MonoBehaviour
         {
             nextDirection = direction;
         }
+
     }
 
     public bool Occupied(Vector2 direction)
     {
-        RaycastHit2D hit = Physics2D.BoxCast(transform.position, Vector2.one * 0.75f, 0.0f, direction, 1.5f, obstacleLayer);
+        RaycastHit2D hit = Physics2D.BoxCast(transform.position, Vector2.one * 0.6f, 0.0f, direction, 0.4f, obstacleLayer);
         return hit.collider != null;
     } 
 }
