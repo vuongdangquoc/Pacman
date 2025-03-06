@@ -31,7 +31,6 @@ public class GhostChase : GhostBehavior
                 }
             }
 
-            Debug.Log(ghost + "huong di" + ghost.movement.direction);
             ghost.movement.SetDirection(direction);
         }
     }

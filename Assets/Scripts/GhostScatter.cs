@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class GhostScatter : GhostBehavior
 {
@@ -28,7 +28,6 @@ public class GhostScatter : GhostBehavior
                     index = 0;
                 }
             }
-            Debug.Log(ghost + "huong di" + ghost.movement.direction);
             ghost.movement.SetDirection(node.availableDirections[index]);
         }
     }

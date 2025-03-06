@@ -17,7 +17,6 @@ public class MapGenerator : MonoBehaviour
     public RuleTile pelletTile;         // Tile cho viên thức ăn
     public RuleTile node;
     public GameObject pacmanPrefab;
-    public GameObject nodePrefab;
     private List<Vector3> pelletPositions = new List<Vector3>();
     public Ghost[] ghosts;
     private int[,] map; // 0 = đường đi, 1 = tường

@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class Node : MonoBehaviour
@@ -30,5 +30,10 @@ public class Node : MonoBehaviour
             this.availableDirections.Add(direction);
         } 
     }
-    
+
+    public bool IsInsideNode(Vector2 ghostPosition)
+    {
+        return Vector2.Distance(transform.position, ghostPosition) < 0.1f; // Kiểm tra xem Ghost đã nằm giữa node chưa
+    }
+
 }
