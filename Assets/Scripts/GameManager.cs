@@ -7,6 +7,8 @@ public class GameManager : MonoBehaviour
     public Pacman pacman;
     public Transform pellets;
     public Transform diamonds;
+
+    public MapGenerator map;
     public int ghostMultiplier { get; private set; } = 1;
     public int score {  get; private set; }
     public int lives { get; private set; }
@@ -46,11 +48,11 @@ public class GameManager : MonoBehaviour
 
     private void NewRoud()
     {
-        foreach (Transform pellet in pellets)
-        {
-            pellet.gameObject.SetActive(true);
-        }
-
+        //foreach (Transform pellet in pellets)
+        //{
+        //    pellet.gameObject.SetActive(true);
+        //}
+        map.GenerateAll();
         ResetState();
     }
 

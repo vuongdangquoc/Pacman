@@ -777,7 +777,8 @@ MonoBehaviour:
   diamonds: {fileID: 166825142}
   wallTile: {fileID: 11400000, guid: 3f91a99181cc5fe4680bfa7580826b0e, type: 2}
   pelletTile: {fileID: 11400000, guid: d4ffeeef29eff2f4f9d4f2626667716e, type: 2}
-  appleTile: {fileID: 11400000, guid: 2e15bf6fa43136141a569f15220d37a8, type: 2}
+  powerPelletTile: {fileID: 11400000, guid: e4f4fb33cd26be04d9019b9dbe6890dd, type: 2}
+  diamondTile: {fileID: 11400000, guid: 2e15bf6fa43136141a569f15220d37a8, type: 2}
   node: {fileID: 11400000, guid: cb92f34f3480e08498a821d78557206f, type: 2}
   pacmanPrefab: {fileID: 2727860863316753928, guid: feec0d91ecd779f4e9fd3516dc7b3432, type: 3}
   ghosts:
@@ -925,7 +926,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -852, y: -390}
+  m_AnchoredPosition: {x: -130, y: -10}
   m_SizeDelta: {x: 84.4663, y: 23.1333}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &643255126
@@ -1715,6 +1716,7 @@ MonoBehaviour:
   pacman: {fileID: 0}
   pellets: {fileID: 420271613}
   diamonds: {fileID: 166825140}
+  map: {fileID: 554212927}
 --- !u!4 &1695642971
 Transform:
   m_ObjectHideFlags: 0

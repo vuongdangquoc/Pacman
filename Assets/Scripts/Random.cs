@@ -16,14 +16,20 @@ public class MapGenerator : MonoBehaviour
 
     public Tile wallTile;           // Tile cho tường
     public RuleTile pelletTile;         // Tile cho viên thức ăn
-    public RuleTile appleTile;
+    public RuleTile powerPelletTile;         // Tile cho power viên thức ăn
+    public RuleTile diamondTile;
     public RuleTile node;
     public GameObject pacmanPrefab;
     private List<Vector3Int> pelletPositions = new List<Vector3Int>();
     public Ghost[] ghosts;
     private int[,] map; // 0 = đường đi, 1 = tường
 
-    void Start()
+    //void Start()
+    //{
+    //    GenerateAll();
+    //}
+
+    public void GenerateAll()
     {
         GenerateMap();
         PlaceGhostHouse();
@@ -31,8 +37,6 @@ public class MapGenerator : MonoBehaviour
         PlacePacman();
         PlaceNodes();
         PlaceDiamondPellets();
-
-
     }
     // 1️⃣ Tạo mê cung ngẫu nhiên
     public void GenerateMap()
@@ -140,6 +144,9 @@ public class MapGenerator : MonoBehaviour
     {
         walls.ClearAllTiles(); // Xóa tile cũ trước khi vẽ mới
         pellets.ClearAllTiles();
+        pelletPositions.Clear();
+        nodes.ClearAllTiles();
+        diamonds.ClearAllTiles();
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
@@ -270,7 +277,7 @@ public class MapGenerator : MonoBehaviour
 
         Vector3Int center = new Vector3Int(width / 2, height / 2, 0);
 
-        // Chia pelletPositions thành 4 nhóm
+        // Chia pelletPositions thành 4 phần bản đồ
         foreach (var pos in pelletPositions)
         {
             if (pos.x < center.x && pos.y >= center.y)
@@ -283,17 +290,22 @@ public class MapGenerator : MonoBehaviour
                 quadrants[3].Add(pos); // Góc dưới phải
         }
 
-        // Đặt 3 viên "diamond" trong mỗi góc
+        // Đặt 3 diamond trong mỗi góc
         for (int i = 0; i < 4; i++)
         {
             if (quadrants[i].Count > 0)
             {
                 for (int j = 0; j < 3; j++)
                 {
-                    Vector3Int selectedPos = quadrants[i][Random.Range(0, quadrants[i].Count)];
-                    diamonds.SetTile(selectedPos, appleTile); // Đặt viên đặc biệt
-                    pelletPositions.Remove(selectedPos); // Xóa khỏi danh sách viên thức ăn thường
+                    Vector3Int diamondPos = quadrants[i][Random.Range(0, quadrants[i].Count)];
+                    diamonds.SetTile(diamondPos, diamondTile); // Đặt viên đặc biệt
+                    quadrants[i].Remove(diamondPos);
+                    pelletPositions.Remove(diamondPos); // Xóa khỏi danh sách viên thức ăn thường
                 }
+
+                    Vector3Int powerPelletPos = quadrants[i][Random.Range(0, quadrants[i].Count)];
+                    pellets.SetTile(powerPelletPos, powerPelletTile);
+                    pelletPositions.Remove(powerPelletPos);
             }
         }
     }
