@@ -6,6 +6,7 @@ public class GameManager : MonoBehaviour
     public Ghost[] ghosts;
     public Pacman pacman;
     public Transform pellets;
+    public Transform diamonds;
     public int ghostMultiplier { get; private set; } = 1;
     public int score {  get; private set; }
     public int lives { get; private set; }
@@ -128,6 +129,16 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void DiamondEaten(Diamond diamond)
+    {
+        diamond.gameObject.SetActive(false);
+        if (!HasRemainingDiamonds())
+        {
+            this.pacman.gameObject.SetActive(false);
+            Invoke(nameof(NewRoud), 3.0f);
+        }
+    }
+
     public void PowerPelletEaten(PowerPellet pellet)
     {
         for (int i = 0; i <this.ghosts.Length; i++)
@@ -139,6 +150,17 @@ public class GameManager : MonoBehaviour
         Invoke(nameof(ResetGhostMultiplier), pellet.duration);
     }
 
+    private bool HasRemainingDiamonds()
+    {
+        foreach (Transform diamond in diamonds)
+        {
+            if (diamond.gameObject.activeSelf)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
     private bool HasRemainingPelllets()
     {
         foreach (Transform pellet in pellets)
