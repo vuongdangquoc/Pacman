@@ -12,12 +12,14 @@ public class MapGenerator : MonoBehaviour
     public Tilemap walls;         // Tilemap chính
     public Tilemap pellets;         // Tilemap pellet
     public Tilemap nodes;         // Tilemap pellet
+    public Tilemap diamonds;
 
     public Tile wallTile;           // Tile cho tường
     public RuleTile pelletTile;         // Tile cho viên thức ăn
+    public RuleTile appleTile;
     public RuleTile node;
     public GameObject pacmanPrefab;
-    private List<Vector3> pelletPositions = new List<Vector3>();
+    private List<Vector3Int> pelletPositions = new List<Vector3Int>();
     public Ghost[] ghosts;
     private int[,] map; // 0 = đường đi, 1 = tường
 
@@ -28,7 +30,9 @@ public class MapGenerator : MonoBehaviour
         DrawMap();
         PlacePacman();
         PlaceNodes();
-        
+        PlaceDiamondPellets();
+
+
     }
     // 1️⃣ Tạo mê cung ngẫu nhiên
     public void GenerateMap()
@@ -173,7 +177,7 @@ public class MapGenerator : MonoBehaviour
         if (pelletPositions.Count > 0)
         {
             Vector3Int pacmanTilePos = Vector3Int.FloorToInt(pelletPositions[Random.Range(0, pelletPositions.Count)]);
-            walls.SetTile(pacmanTilePos, null);
+            pellets.SetTile(pacmanTilePos, null);
             pelletPositions.Remove(pacmanTilePos);
             Debug.Log(pacmanTilePos);
             var newPacman = Instantiate(pacmanPrefab, pacmanTilePos + new Vector3(0.5f, 0.5f, 0), Quaternion.identity);
@@ -252,5 +256,45 @@ public class MapGenerator : MonoBehaviour
             }
         }
         return false;
+    }
+
+    public void PlaceDiamondPellets()
+    {
+        List<Vector3Int>[] quadrants = new List<Vector3Int>[4]
+        {
+        new List<Vector3Int>(), // Góc trên trái
+        new List<Vector3Int>(), // Góc trên phải
+        new List<Vector3Int>(), // Góc dưới trái
+        new List<Vector3Int>()  // Góc dưới phải
+        };
+
+        Vector3Int center = new Vector3Int(width / 2, height / 2, 0);
+
+        // Chia pelletPositions thành 4 nhóm
+        foreach (var pos in pelletPositions)
+        {
+            if (pos.x < center.x && pos.y >= center.y)
+                quadrants[0].Add(pos); // Góc trên trái
+            else if (pos.x >= center.x && pos.y >= center.y)
+                quadrants[1].Add(pos); // Góc trên phải
+            else if (pos.x < center.x && pos.y < center.y)
+                quadrants[2].Add(pos); // Góc dưới trái
+            else
+                quadrants[3].Add(pos); // Góc dưới phải
+        }
+
+        // Đặt 3 viên "diamond" trong mỗi góc
+        for (int i = 0; i < 4; i++)
+        {
+            if (quadrants[i].Count > 0)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    Vector3Int selectedPos = quadrants[i][Random.Range(0, quadrants[i].Count)];
+                    diamonds.SetTile(selectedPos, appleTile); // Đặt viên đặc biệt
+                    pelletPositions.Remove(selectedPos); // Xóa khỏi danh sách viên thức ăn thường
+                }
+            }
+        }
     }
 }
