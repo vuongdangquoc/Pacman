@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -6,8 +7,9 @@ public class GameManager : MonoBehaviour
     public Ghost[] ghosts;
     public Pacman pacman;
     public Transform pellets;
+    public GameObject pauseMenu;
     public int ghostMultiplier { get; private set; } = 1;
-    public int score {  get; private set; }
+    public int score { get; private set; }
     public int lives { get; private set; }
 
     private void Awake()
@@ -25,13 +27,19 @@ public class GameManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        TogglePause(false);
         NewGame();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(this.lives <=0 && Input.anyKeyDown)
+        if (!pauseMenu.gameObject.activeSelf && Input.GetKeyDown(KeyCode.Escape))
+        {
+            TogglePause(true);
+        }
+
+        if (this.lives <= 0 && Input.anyKeyDown)
         {
             NewGame();
         }
@@ -53,7 +61,8 @@ public class GameManager : MonoBehaviour
         ResetState();
     }
 
-    private void ResetState() {
+    private void ResetState()
+    {
         ResetGhostMultiplier();
         pacman.ResetState();
         for (int i = 0; i < ghosts.Length; i++)
@@ -73,7 +82,8 @@ public class GameManager : MonoBehaviour
         pacman.gameObject.SetActive(false);
     }
 
-    private void SetScore(int score) {
+    private void SetScore(int score)
+    {
         this.score = score;
     }
 
@@ -91,10 +101,10 @@ public class GameManager : MonoBehaviour
     public void PacmanEaten()
     {
         this.pacman.gameObject.SetActive(false);
-        SetLives(this.lives-1);
-        if(this.lives > 0)
+        SetLives(this.lives - 1);
+        if (this.lives > 0)
         {
-            Invoke(nameof(ResetState),3.0f);
+            Invoke(nameof(ResetState), 3.0f);
         }
         else
         {
@@ -145,5 +155,17 @@ public class GameManager : MonoBehaviour
     public void SetGhosts(Ghost[] newGhosts)
     {
         ghosts = newGhosts;
+    }
+
+    public void TogglePause(bool paused)
+    {
+        Time.timeScale = paused ? 0 : 1;
+        pacman.gameObject.SetActive(!paused);
+        pauseMenu.gameObject.SetActive(paused);
+    }
+
+    public void GoToMainMenu()
+    {
+        SceneManager.LoadScene("Main Menu");
     }
 }
