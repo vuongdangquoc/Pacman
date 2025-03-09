@@ -60,8 +60,15 @@ public class GameManager : MonoBehaviour
         {
             this.ghosts[i].ResetState();
         }
-
     }
+
+    private void ResetStateAfterPacmanEaten()
+    {
+        ResetGhostMultiplier();
+        pacman.ResetState();
+   
+    }
+
 
     private void GameOver()
     {
@@ -94,7 +101,15 @@ public class GameManager : MonoBehaviour
         SetLives(this.lives-1);
         if(this.lives > 0)
         {
-            Invoke(nameof(ResetState),3.0f);
+            for (int i = 0; i < ghosts.Length; i++)
+            {
+                this.ghosts[i].scatter.Enable();
+                this.ghosts[i].chase.Disable();
+                this.ghosts[i].frightened.Disable();
+                this.ghosts[i].home.Disable();
+
+            }
+            Invoke(nameof(ResetStateAfterPacmanEaten),3.0f);
         }
         else
         {

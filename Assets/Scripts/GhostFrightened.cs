@@ -11,14 +11,12 @@ public class GhostFrightened : GhostBehavior
 
     public override void Enable(float duration)
     {
-        Debug.Log("Vua bat 1");
         base.Enable(duration);
 
         body.enabled = false;
         eyes.enabled = false;
         blue.enabled = true;
         white.enabled = false;
-        Debug.Log("Vua bat 2");
         Invoke(nameof(Flash), duration / 2f);
     }
 
@@ -57,8 +55,8 @@ public class GhostFrightened : GhostBehavior
     private void OnEnable()
     {
         blue.GetComponent<AnimateSprite>().Restart();
-       
-        //ghost.movement.speedMultiplier = 0.5f;
+
+        this.ghost.movement.speedMultiplier = 0.5f;
         eaten = false;
     }
 

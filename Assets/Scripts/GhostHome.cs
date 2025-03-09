@@ -34,6 +34,7 @@ public class GhostHome : GhostBehavior
     {
         // Turn off movement while we manually animate the position
         ghost.movement.SetDirection(Vector2.up, true);
+        
         ghost.movement.enabled = false;
 
         Vector3 position = transform.position;
