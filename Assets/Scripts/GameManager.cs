@@ -1,6 +1,5 @@
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
@@ -10,16 +9,18 @@ public class GameManager : MonoBehaviour
     public Pacman pacman;
     public Transform pellets;
     public Transform diamonds;
-    //public Score scoreDisplay;
+    public TextMeshProUGUI txtScore;
     public Fruit fruit;
-    public Life lifeDisplay;
-    public TextMeshProUGUI txtPoint;
+    public TextMeshProUGUI txtLife;
+    public TextMeshProUGUI txtDiamonds;
     public MapGenerator map;
     public GameObject pauseMenu;
     public LightSystem lightSystem;
     public int ghostMultiplier { get; private set; } = 1;
     public int score { get; private set; }
     public int lives { get; private set; }
+    public int remainingDiamonds { get; private set; }
+    public float currentTimeScale = 1;
 
     private void Awake()
     {
@@ -55,6 +56,7 @@ public class GameManager : MonoBehaviour
     }
     void NewGame()
     {
+        currentTimeScale = 1;
         SetScore(0);
         SetLives(3);
         NewRoud();
@@ -66,8 +68,10 @@ public class GameManager : MonoBehaviour
         //{
         //    pellet.gameObject.SetActive(true);
         //}
+        Time.timeScale = currentTimeScale;
         map.GenerateAll();
         ResetState();
+        SetDiamonds(diamonds.childCount);
     }
 
     private void ResetState()
@@ -101,13 +105,19 @@ public class GameManager : MonoBehaviour
     private void SetScore(int score)
     {
         this.score = score;
-        txtPoint.text = "Point: " + score.ToString();
+        txtScore.text = "POINT: " + score.ToString();
     }
 
     private void SetLives(int lives)
     {
         this.lives = lives;
-        lifeDisplay.DisplayLife(lives);
+        txtLife.text = "X" + lives.ToString();
+    }
+    
+    private void SetDiamonds(int diamonds)
+    {
+        this.remainingDiamonds = diamonds;
+        txtDiamonds.text = "X" + diamonds.ToString();
     }
 
     public void GhostEaten(Ghost ghost)
@@ -142,11 +152,11 @@ public class GameManager : MonoBehaviour
     {
         pellet.gameObject.SetActive(false);
         SetScore(this.score + pellet.points);
-        if (!HasRemainingPelllets())
-        {
-            this.pacman.gameObject.SetActive(false);
-            Invoke(nameof(NewRoud), 3.0f);
-        }
+        //if (!HasRemainingPelllets())
+        //{
+        //    this.pacman.gameObject.SetActive(false);
+        //    Invoke(nameof(NewRoud), 3.0f);
+        //}
     }
 
     public void FruitEaten(Fruit fruit)
@@ -157,9 +167,11 @@ public class GameManager : MonoBehaviour
     public void DiamondEaten(Diamond diamond)
     {
         diamond.gameObject.SetActive(false);
+        SetDiamonds(remainingDiamonds - 1);
         if (!HasRemainingDiamonds())
         {
             this.pacman.gameObject.SetActive(false);
+            currentTimeScale += 0.1f; //tang toc do
             Invoke(nameof(NewRoud), 3.0f);
         }
     }
@@ -186,17 +198,17 @@ public class GameManager : MonoBehaviour
         }
         return false;
     }
-    private bool HasRemainingPelllets()
-    {
-        foreach (Transform pellet in pellets)
-        {
-            if (pellet.gameObject.activeSelf)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
+    //private bool HasRemainingPelllets()
+    //{
+    //    foreach (Transform pellet in pellets)
+    //    {
+    //        if (pellet.gameObject.activeSelf)
+    //        {
+    //            return true;
+    //        }
+    //    }
+    //    return false;
+    //}
 
     private void ResetGhostMultiplier()
     {
@@ -220,7 +232,7 @@ public class GameManager : MonoBehaviour
 
     public void TogglePause(bool paused)
     {
-        Time.timeScale = paused ? 0 : 1;
+        Time.timeScale = paused ? 0 : currentTimeScale;
         pacman.gameObject.SetActive(!paused);
         pauseMenu.gameObject.SetActive(paused);
     }

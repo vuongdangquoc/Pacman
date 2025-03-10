@@ -2,7 +2,7 @@
 using System.Collections;
 public class GateController : MonoBehaviour
 {
-    public GameObject gameObject;
+    public new GameObject gameObject;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
