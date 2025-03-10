@@ -11,7 +11,7 @@ public class GhostScatter : GhostBehavior
     {
         Node node = other.GetComponent<Node>();
         // Do nothing while the ghost is frightened
-        if (node != null && enabled && !ghost.frightened.enabled)
+        if (node != null && node.availableDirections != null && enabled && !ghost.frightened.enabled)
         {
             // Pick a random available direction
             int index = Random.Range(0, node.availableDirections.Count);

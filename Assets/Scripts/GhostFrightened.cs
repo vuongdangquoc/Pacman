@@ -55,8 +55,11 @@ public class GhostFrightened : GhostBehavior
     private void OnEnable()
     {
         blue.GetComponent<AnimateSprite>().Restart();
-
+        if (ghost.movement != null)
+        {
         this.ghost.movement.speedMultiplier = 0.5f;
+
+        }
         eaten = false;
     }
 

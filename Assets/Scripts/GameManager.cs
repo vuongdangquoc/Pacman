@@ -1,4 +1,6 @@
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -7,7 +9,9 @@ public class GameManager : MonoBehaviour
     public Pacman pacman;
     public Transform pellets;
     public Transform diamonds;
-
+    public Score scoreDisplay;
+    public Life lifeDisplay;
+    public TextMeshProUGUI txtPoint;
     public MapGenerator map;
     public int ghostMultiplier { get; private set; } = 1;
     public int score {  get; private set; }
@@ -83,13 +87,16 @@ public class GameManager : MonoBehaviour
         pacman.gameObject.SetActive(false);
     }
 
-    private void SetScore(int score) {
+    private void SetScore(int score)
+    {
         this.score = score;
+        txtPoint.text = "Point: " + score.ToString();
     }
 
     private void SetLives(int lives)
     {
         this.lives = lives;
+        lifeDisplay.DisplayLife(lives);
     }
 
     public void GhostEaten(Ghost ghost)
