@@ -11,10 +11,12 @@ public class GameManager : MonoBehaviour
     public Transform pellets;
     public Transform diamonds;
     //public Score scoreDisplay;
+    public Fruit fruit;
     public Life lifeDisplay;
     public TextMeshProUGUI txtPoint;
     public MapGenerator map;
     public GameObject pauseMenu;
+    public LightSystem lightSystem;
     public int ghostMultiplier { get; private set; } = 1;
     public int score { get; private set; }
     public int lives { get; private set; }
@@ -147,6 +149,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void FruitEaten(Fruit fruit)
+    {
+        PelletEaten(fruit);
+        lightSystem.IncreaseLight();
+    }
     public void DiamondEaten(Diamond diamond)
     {
         diamond.gameObject.SetActive(false);
@@ -204,6 +211,11 @@ public class GameManager : MonoBehaviour
     public void SetGhosts(Ghost[] newGhosts)
     {
         ghosts = newGhosts;
+    }
+
+    public void SetFruit(Fruit newFruit)
+    {
+        fruit = newFruit;
     }
 
     public void TogglePause(bool paused)

@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using UnityEditor.Rendering;
 using UnityEngine.Tilemaps;
-using UnityEngine.UIElements;
 
 public class MapGenerator : MonoBehaviour
 {
@@ -20,6 +18,7 @@ public class MapGenerator : MonoBehaviour
     public RuleTile diamondTile;
     public RuleTile node;
     public GameObject pacmanPrefab;
+    public GameObject fruitPrefab;
     private List<Vector3Int> pelletPositions = new List<Vector3Int>();
     public Ghost[] ghosts;
     private int[,] map; // 0 = đường đi, 1 = tường
@@ -37,6 +36,7 @@ public class MapGenerator : MonoBehaviour
         PlacePacman();
         PlaceNodes();
         PlaceDiamondPellets();
+        PlaceFruit();
     }
     // 1️⃣ Tạo mê cung ngẫu nhiên
     public void GenerateMap()
@@ -308,6 +308,18 @@ public class MapGenerator : MonoBehaviour
                     pellets.SetTile(powerPelletPos, powerPelletTile);
                     pelletPositions.Remove(powerPelletPos);
             }
+        }
+    }
+
+    public void PlaceFruit()
+    {
+        if (pelletPositions.Count > 0)
+        {
+            Vector3Int pacmanTilePos = Vector3Int.FloorToInt(pelletPositions[Random.Range(0, pelletPositions.Count)]);
+            pellets.SetTile(pacmanTilePos, null);
+            pelletPositions.Remove(pacmanTilePos);
+            var newFruit = Instantiate(fruitPrefab, pacmanTilePos + new Vector3(0.5f, 0.5f, 0), Quaternion.identity);
+            GameManager.Instance.SetFruit(newFruit.GetComponent<Fruit>());
         }
     }
 }
