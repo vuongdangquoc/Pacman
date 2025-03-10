@@ -189,6 +189,7 @@ public class MapGenerator : MonoBehaviour
             Debug.Log(pacmanTilePos);
             var newPacman = Instantiate(pacmanPrefab, pacmanTilePos + new Vector3(0.5f, 0.5f, 0), Quaternion.identity);
             GameManager.Instance.SetPacman(newPacman.GetComponent<Pacman>());
+            LightSystem.Instance.SetPacman(newPacman.GetComponent<Pacman>());
             foreach (Ghost ghost in ghosts)
             {
                 ghost.SetPacman(newPacman);
