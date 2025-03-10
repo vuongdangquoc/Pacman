@@ -13,8 +13,6 @@ public class MapButtonController : MonoBehaviour
 
     void OnCreateButtonClick()
     {
-        mapGenerator.GenerateMap();
-        mapGenerator.DrawMap();
-        mapGenerator.PlaceNodes();
+        mapGenerator.GenerateAll();
     }
 }
