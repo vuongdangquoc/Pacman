@@ -12,4 +12,9 @@ public class Fruit : Pellet
     {
         FindFirstObjectByType<GameManager>().FruitEaten(this);
     }
+    public void GenerateRandomSprite()
+    {
+        int randomIndex = Random.Range(0, fruitSprites.Count);
+        spriteRenderer.sprite = fruitSprites[randomIndex];
+    }
 }

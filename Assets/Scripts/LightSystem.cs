@@ -35,7 +35,7 @@ public class LightSystem : MonoBehaviour
     }
     public void ResetLight()
     {
-        light.pointLightOuterRadius = 5;
+        light.pointLightOuterRadius = 6;
         light.pointLightInnerRadius = 4;
     }
     public void IncreaseLight()

@@ -71,6 +71,7 @@ public class GameManager : MonoBehaviour
 
     private void ResetState()
     {
+        LightSystem.Instance.ResetLight();
         SetDiamonds(diamonds.childCount);
         ResetGhostMultiplier();
         pacman.ResetState();
@@ -84,7 +85,7 @@ public class GameManager : MonoBehaviour
     {
         ResetGhostMultiplier();
         pacman.ResetState();
-   
+        LightSystem.Instance.ResetLight();
     }
 
 
@@ -224,6 +225,7 @@ public class GameManager : MonoBehaviour
     public void SetFruit(Fruit newFruit)
     {
         fruit = newFruit;
+        fruit.GenerateRandomSprite();
     }
 
     public void TogglePause(bool paused)

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1450324728810116255}
   - component: {fileID: 3971489638013972145}
   m_Layer: 8
-  m_Name: Fruit_Cherry
+  m_Name: Fruit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -105,6 +105,11 @@ MonoBehaviour:
   fruitSprites:
   - {fileID: 21300000, guid: bcf9abba0c5011447aedacaa56f809a4, type: 3}
   - {fileID: 21300000, guid: 333efda297305804ab18ba62c4a59b0d, type: 3}
+  - {fileID: 21300000, guid: 7f92fd0a6259c0748a3798477124414b, type: 3}
+  - {fileID: 21300000, guid: 1f934a213c2899840a159f72b7f44e57, type: 3}
+  - {fileID: 21300000, guid: 76efc71326ce0624b86ebac20e4ad950, type: 3}
+  - {fileID: 21300000, guid: 9db59b1f7c3f18a488bb7006c8f7d63a, type: 3}
+  - {fileID: 21300000, guid: 43287113cc1900f44a90a7c880c6c0f6, type: 3}
   spriteRenderer: {fileID: 4010769715978407919}
 --- !u!61 &3971489638013972145
 BoxCollider2D:
