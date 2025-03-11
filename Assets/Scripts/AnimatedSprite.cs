@@ -47,7 +47,7 @@ public class AnimateSprite : MonoBehaviour
     public void Restart()
     {
         this.animationFrame = -1;
-
+        print(this.gameObject);
         Advance();
     }
 }

@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI txtDiamond;
     public MapGenerator map;
     public GameObject pauseMenu;
+    public GameObject gameOverScreen;
     public LightSystem lightSystem;
     public float currentTimeScale = 1;
     public int ghostMultiplier { get; private set; } = 1;
@@ -44,25 +45,21 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!pauseMenu.gameObject.activeSelf && Input.GetKeyDown(KeyCode.Escape))
+        if (!pauseMenu.gameObject.activeSelf && !gameOverScreen.gameObject.activeSelf && Input.GetKeyDown(KeyCode.Escape))
         {
             TogglePause(true);
         }
-
-        if (this.lives <= 0 && Input.anyKeyDown)
-        {
-            NewGame();
-        }
     }
-    void NewGame()
+    public void NewGame()
     {
+        gameOverScreen.gameObject.SetActive(false);
         currentTimeScale = 1;
         SetScore(0);
         SetLives(3);
-        NewRoud();
+        NewRound();
     }
 
-    private void NewRoud()
+    private void NewRound()
     {
         Time.timeScale = currentTimeScale;
         map.GenerateAll();
@@ -97,6 +94,7 @@ public class GameManager : MonoBehaviour
         }
 
         pacman.gameObject.SetActive(false);
+        gameOverScreen.gameObject.SetActive(true);
     }
 
     private void SetScore(int score)
@@ -149,11 +147,6 @@ public class GameManager : MonoBehaviour
     {
         pellet.gameObject.SetActive(false);
         SetScore(this.score + pellet.points);
-        //if (!HasRemainingPelllets())
-        //{
-        //    this.pacman.gameObject.SetActive(false);
-        //    Invoke(nameof(NewRoud), 3.0f);
-        //}
     }
 
     public void FruitEaten(Fruit fruit)
@@ -168,7 +161,7 @@ public class GameManager : MonoBehaviour
         if (!HasRemainingDiamonds())
         {
             this.pacman.gameObject.SetActive(false);
-            Invoke(nameof(NewRoud), 3.0f);
+            Invoke(nameof(NewRound), 3.0f);
             currentTimeScale += 0.1f;
         }
     }
@@ -195,17 +188,6 @@ public class GameManager : MonoBehaviour
         }
         return false;
     }
-    //private bool HasRemainingPelllets()
-    //{
-    //    foreach (Transform pellet in pellets)
-    //    {
-    //        if (pellet.gameObject.activeSelf)
-    //        {
-    //            return true;
-    //        }
-    //    }
-    //    return false;
-    //}
 
     private void ResetGhostMultiplier()
     {
