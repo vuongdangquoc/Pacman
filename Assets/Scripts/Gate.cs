@@ -4,7 +4,7 @@ using UnityEngine;
 public class Gate : MonoBehaviour
 {
     public Transform connection;
-    public GameObject gameObject;
+    public new GameObject gameObject;
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Pacman"))
