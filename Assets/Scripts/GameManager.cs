@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
     public MapGenerator map;
     public GameObject pauseMenu;
     public GameObject gameOverScreen;
+    public GameObject levelUpScreen;
     public LightSystem lightSystem;
     public float currentTimeScale = 1;
     public int ghostMultiplier { get; private set; } = 1;
@@ -52,6 +53,10 @@ public class GameManager : MonoBehaviour
     }
     public void NewGame()
     {
+        foreach (var ghost in ghosts)
+        {
+            ghost.frightened.duration = 8;
+        }
         gameOverScreen.gameObject.SetActive(false);
         currentTimeScale = 1;
         SetScore(0);
@@ -61,6 +66,8 @@ public class GameManager : MonoBehaviour
 
     private void NewRound()
     {
+        LightSystem.Instance.ResetLight();
+        levelUpScreen.gameObject.SetActive(false);
         Time.timeScale = currentTimeScale;
         map.GenerateAll();
         ResetState();
@@ -68,7 +75,6 @@ public class GameManager : MonoBehaviour
 
     private void ResetState()
     {
-        LightSystem.Instance.ResetLight();
         SetDiamonds(diamonds.childCount);
         ResetGhostMultiplier();
         pacman.ResetState();
@@ -82,7 +88,6 @@ public class GameManager : MonoBehaviour
     {
         ResetGhostMultiplier();
         pacman.ResetState();
-        LightSystem.Instance.ResetLight();
     }
 
 
@@ -99,8 +104,13 @@ public class GameManager : MonoBehaviour
 
     private void SetScore(int score)
     {
+        int previousScore = this.score;
         this.score = score;
         txtPoint.text = "POINT: " + score.ToString();
+        if (score / 10000 > previousScore / 10000)
+        {
+            SetLives(++lives);
+        }
     }
 
     private void SetLives(int lives)
@@ -108,7 +118,7 @@ public class GameManager : MonoBehaviour
         this.lives = lives;
         txtLife.text = "X" + lives.ToString();
     }
-    
+
     private void SetDiamonds(int diamonds)
     {
         this.remainingDiamonds = diamonds;
@@ -135,7 +145,7 @@ public class GameManager : MonoBehaviour
                 this.ghosts[i].home.Disable();
 
             }
-            Invoke(nameof(ResetStateAfterPacmanEaten),3.0f);
+            Invoke(nameof(ResetStateAfterPacmanEaten), 3.0f);
         }
         else
         {
@@ -160,15 +170,25 @@ public class GameManager : MonoBehaviour
         SetDiamonds(remainingDiamonds - 1);
         if (!HasRemainingDiamonds())
         {
-            this.pacman.gameObject.SetActive(false);
+            levelUpScreen.gameObject.SetActive(true);
+            pacman.gameObject.SetActive(false);
             Invoke(nameof(NewRound), 3.0f);
-            currentTimeScale += 0.1f;
+            currentTimeScale += 0.05f;
+
+            //decrease ghost frighted time (min. 2 seconds)
+            foreach (var ghost in ghosts)
+            {
+                if (ghost.frightened.duration >= 2)
+                {
+                    ghost.frightened.duration -= 0.5f;
+                }
+            }
         }
     }
 
     public void PowerPelletEaten(PowerPellet pellet)
     {
-        for (int i = 0; i <this.ghosts.Length; i++)
+        for (int i = 0; i < this.ghosts.Length; i++)
         {
             this.ghosts[i].frightened.Enable(pellet.duration);
         }
