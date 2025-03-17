@@ -7,10 +7,10 @@ public class MapGenerator : MonoBehaviour
     public int width = 31;   // Chiều rộng (số lẻ để dễ tạo đối xứng)
     public int height = 31;  // Chiều cao (số lẻ để dễ tạo đối xứng)
 
-    public Tilemap walls;         // Tilemap chính
-    public Tilemap pellets;         // Tilemap pellet
-    public Tilemap nodes;         // Tilemap pellet
-    public Tilemap diamonds;
+    public Tilemap walls;         // Map tường
+    public Tilemap pellets;       // Map viên pellet
+    public Tilemap nodes;         // Map cho các node
+    public Tilemap diamonds;      // Map cho kim cương
 
     public Tile wallTile;           // Tile cho tường
     public RuleTile pelletTile;         // Tile cho viên thức ăn
@@ -21,12 +21,7 @@ public class MapGenerator : MonoBehaviour
     public GameObject fruitPrefab;
     private List<Vector3Int> pelletPositions = new List<Vector3Int>();
     public Ghost[] ghosts;
-    private int[,] map; // 0 = đường đi, 1 = tường
-
-    //void Start()
-    //{
-    //    GenerateAll();
-    //}
+    private int[,] map; // mảng 2 chiều cho đường đi và tường. recommend để là boolean, true là tường, false là đường đi.
 
     public void GenerateAll()
     {
@@ -38,7 +33,8 @@ public class MapGenerator : MonoBehaviour
         PlaceDiamondPellets();
         PlaceFruit();
     }
-    // 1️⃣ Tạo mê cung ngẫu nhiên
+
+    // 1. Tạo mê cung ngẫu nhiên
     public void GenerateMap()
     {
         map = new int[width, height];
@@ -54,15 +50,12 @@ public class MapGenerator : MonoBehaviour
         // Đối xứng bản đồ để tạo cảm giác quen thuộc như Pac-Man
         MirrorMap();
 
-        for (int j = 0; j < height; j++)
-        {
-            map[0, j] = 1;
-            map[30, j] = 1;
-        }
-
+        // Tạo tường bao quanh
         for (int i = 0; i < height; i++)
         {
+            map[0, i] = 1;
             map[i, 0] = 1;
+            map[30, i] = 1;
             map[i, 30] = 1;
         }
 
@@ -70,24 +63,21 @@ public class MapGenerator : MonoBehaviour
         {
             map[1, j] = 0;
             map[29, j] = 0;
-        }
-        for (int j = 1; j < height - 1; j++)
-        {
             map[j, 29] = 0;
-        }     
-        
+        }
+
         PlaceGhostHouse();
 
     }
 
-    // 2️⃣ Đào đường đi chính
+    // 2. Đào đường đi chính
     void CarvePath(int x, int y)
     {
         map[x, y] = 0;  // Đánh dấu là đường đi
 
         // Hướng di chuyển: lên, xuống, trái, phải (random thứ tự)
 
-
+        // problem: tại sao là 2 mà không phải là 1?
         List<Vector2Int> directions = new List<Vector2Int>
         {
             new Vector2Int(0, 2),
@@ -117,17 +107,15 @@ public class MapGenerator : MonoBehaviour
                 CarvePath(nx, ny);
             }
         }
-
-
     }
 
-    // 4️⃣ Kiểm tra giới hạn bản đồ
+    // 3. Kiểm tra giới hạn bản đồ
     bool IsInBounds(int x, int y)
     {
         return x > 0 && x < width - 1 && y > 0 && y < height - 1;
     }
 
-    // 5️⃣ Tạo đối xứng bản đồ (theo trục dọc)
+    // 4. Tạo đối xứng bản đồ (theo trục dọc)
     void MirrorMap()
     {
         for (int x = 0; x < width / 2; x++)
@@ -139,10 +127,11 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
-    // 6️⃣ Vẽ bản đồ lên scene
+    // 6. Vẽ bản đồ
     public void DrawMap()
     {
-        walls.ClearAllTiles(); // Xóa tile cũ trước khi vẽ mới
+        //Xóa hết các tile trên bản đồ
+        walls.ClearAllTiles();
         pellets.ClearAllTiles();
         pelletPositions.Clear();
         nodes.ClearAllTiles();
@@ -166,13 +155,14 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
-    // Hàm trộn danh sách để random hướng đi
+    // Random list các hướng đi
     void Shuffle(List<Vector2Int> list)
     {
         for (int i = 0; i < list.Count; i++)
         {
-            Vector2Int temp = list[i];
             int randomIndex = Random.Range(i, list.Count);
+
+            Vector2Int temp = list[i];
             list[i] = list[randomIndex];
             list[randomIndex] = temp;
         }
@@ -186,7 +176,6 @@ public class MapGenerator : MonoBehaviour
             Vector3Int pacmanTilePos = Vector3Int.FloorToInt(pelletPositions[Random.Range(0, pelletPositions.Count)]);
             pellets.SetTile(pacmanTilePos, null);
             pelletPositions.Remove(pacmanTilePos);
-            Debug.Log(pacmanTilePos);
             var newPacman = Instantiate(pacmanPrefab, pacmanTilePos + new Vector3(0.5f, 0.5f, 0), Quaternion.identity);
             GameManager.Instance.SetPacman(newPacman.GetComponent<Pacman>());
             LightSystem.Instance.SetPacman(newPacman.GetComponent<Pacman>());
@@ -198,7 +187,7 @@ public class MapGenerator : MonoBehaviour
     }
 
 
-    //ghost house
+    //5. Nhà của Pacman
     public void PlaceGhostHouse()
     {
         //ghost house
@@ -221,17 +210,17 @@ public class MapGenerator : MonoBehaviour
         {
             for (int y = 0; y < height; y++)
             {
-                    if (map[x, y] != 1)
+                if (map[x, y] != 1)
+                {
+                    Vector3Int position = new Vector3Int(x, y, 0);
+
+                    // Kiểm tra nếu vị trí là ngã ba/ngã tư
+                    if (IsIntersection(position))
                     {
-                        Vector3Int position = new Vector3Int(x, y, 0);
-
-                        // Kiểm tra nếu vị trí là ngã ba/ngã tư
-                        if (IsIntersection(position))
-                        {
-                            nodes.SetTile(position, node);                          
-                        }
-
+                        nodes.SetTile(position, node);
                     }
+
+                }
 
             }
         }
@@ -304,9 +293,9 @@ public class MapGenerator : MonoBehaviour
                     pelletPositions.Remove(diamondPos); // Xóa khỏi danh sách viên thức ăn thường
                 }
 
-                    Vector3Int powerPelletPos = quadrants[i][Random.Range(0, quadrants[i].Count)];
-                    pellets.SetTile(powerPelletPos, powerPelletTile);
-                    pelletPositions.Remove(powerPelletPos);
+                Vector3Int powerPelletPos = quadrants[i][Random.Range(0, quadrants[i].Count)];
+                pellets.SetTile(powerPelletPos, powerPelletTile);
+                pelletPositions.Remove(powerPelletPos);
             }
         }
     }

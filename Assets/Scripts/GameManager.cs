@@ -2,6 +2,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using Assets.Scripts;
+using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
 {
@@ -22,8 +24,10 @@ public class GameManager : MonoBehaviour
     public float currentTimeScale = 1;
     public int ghostMultiplier { get; private set; } = 1;
     public int score { get; private set; }
+    public int initialLevelScore { get; private set; }
     public int lives { get; private set; }
     public int remainingDiamonds { get; private set; }
+    public int level { get; private set; }
 
     private void Awake()
     {
@@ -46,21 +50,22 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!pauseMenu.gameObject.activeSelf && !gameOverScreen.gameObject.activeSelf && Input.GetKeyDown(KeyCode.Escape))
+        if (!pauseMenu.gameObject.activeSelf && !gameOverScreen.gameObject.activeSelf && !levelUpScreen.gameObject.activeSelf && Input.GetKeyDown(KeyCode.Escape))
         {
             TogglePause(true);
         }
     }
     public void NewGame()
     {
+        level = SaveData.currentData.Level;
         foreach (var ghost in ghosts)
         {
             ghost.frightened.duration = 8;
         }
         gameOverScreen.gameObject.SetActive(false);
-        currentTimeScale = 1;
-        SetScore(0);
-        SetLives(3);
+        currentTimeScale = 1 + (SaveData.currentData.Level - 1) * 0.05f;
+        SetScore(SaveData.currentData.Score);
+        SetLives(SaveData.currentData.Lives);
         NewRound();
     }
 
@@ -75,6 +80,7 @@ public class GameManager : MonoBehaviour
 
     private void ResetState()
     {
+        initialLevelScore = score;
         SetDiamonds(diamonds.childCount);
         ResetGhostMultiplier();
         pacman.ResetState();
@@ -170,6 +176,7 @@ public class GameManager : MonoBehaviour
         SetDiamonds(remainingDiamonds - 1);
         if (!HasRemainingDiamonds())
         {
+            level++;
             levelUpScreen.gameObject.SetActive(true);
             pacman.gameObject.SetActive(false);
             Invoke(nameof(NewRound), 3.0f);
@@ -235,10 +242,56 @@ public class GameManager : MonoBehaviour
         Time.timeScale = paused ? 0 : currentTimeScale;
         pacman.gameObject.SetActive(!paused);
         pauseMenu.gameObject.SetActive(paused);
+        backButton.gameObject.SetActive(false);
     }
 
     public void GoToMainMenu()
     {
         SceneManager.LoadScene("Main Menu");
+    }
+
+    public List<Button> saveButtons;
+    public List<Button> saveSlots;
+    public Button backButton;
+    public void ShowSaveSlots()
+    {
+        saveButtons.ForEach(b => b.gameObject.SetActive(false));
+        backButton.gameObject.SetActive(true);
+        foreach (var saveSlot in saveSlots)
+        {
+            saveSlot.gameObject.SetActive(true);
+            int saveIndex = saveSlots.IndexOf(saveSlot) + 1;
+            TextMeshProUGUI tmp = saveSlot.transform.Find("Status").GetComponent<TextMeshProUGUI>();
+            if (SaveData.CheckSlot(saveIndex))
+            {
+                tmp.text = "OVERRIDE";
+                tmp.color = Color.red;
+            }
+            else
+            {
+                tmp.text = "EMPTY";
+                tmp.color = Color.white;
+            }
+        }
+    }
+    public void Back()
+    {
+        saveButtons.ForEach(b => b.gameObject.SetActive(true));
+        saveSlots.ForEach(b => b.gameObject.SetActive(false));
+        backButton.gameObject.SetActive(false);
+    }
+    public void SaveGame(int slot)
+    {
+        PacmanData pd = new PacmanData()
+        {
+            Level = level,
+            Lives = lives,
+            Score = initialLevelScore
+        };
+        SaveData.SaveGame(slot, pd);
+
+        TextMeshProUGUI tmp = saveSlots[slot - 1].transform.Find("Status").GetComponent<TextMeshProUGUI>();
+        tmp.text = "OVERRIDE";
+        tmp.color = Color.red;
     }
 }
