@@ -8,7 +8,6 @@ public abstract class GhostBehavior : MonoBehaviour
 
     private void Awake()
     {
-
         ghost = GetComponent<Ghost>();
     }
 
@@ -20,7 +19,6 @@ public abstract class GhostBehavior : MonoBehaviour
     public virtual void Enable(float duration)
     {
         enabled = true;
-
         CancelInvoke();
         Invoke(nameof(Disable), duration);
     }
@@ -28,7 +26,6 @@ public abstract class GhostBehavior : MonoBehaviour
     public virtual void Disable()
     {
         enabled = false;
-
         CancelInvoke();
     }
 

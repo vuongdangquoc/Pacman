@@ -6,6 +6,14 @@ public class PowerPellet : Pellet
 
     protected override void Eat()
     {
-        FindFirstObjectByType<GameManager>().PowerPelletEaten(this);
+        int rd = Random.Range(0, 2);
+        if (rd == 0)
+        {
+            FindFirstObjectByType<GameManager>().FrightenedMode(this);
+        }
+        else
+        {
+            FindFirstObjectByType<GameManager>().FreezeMode(this);
+        }
     }
 }

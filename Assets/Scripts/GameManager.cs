@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using Assets.Scripts;
 using System.Collections.Generic;
+using UnityEngine.Tilemaps;
 
 public class GameManager : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI txtPoint;
     public TextMeshProUGUI txtLife;
     public TextMeshProUGUI txtDiamond;
+    public TextMeshProUGUI txtPowerup;
     public MapGenerator map;
     public GameObject pauseMenu;
     public GameObject gameOverScreen;
@@ -28,6 +30,10 @@ public class GameManager : MonoBehaviour
     public int lives { get; private set; }
     public int remainingDiamonds { get; private set; }
     public int level { get; private set; }
+
+    public Tilemap walls;
+    private Color initialWallColor;
+    private List<Color> initialGhostColors = new List<Color>();
 
     private void Awake()
     {
@@ -45,6 +51,12 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         NewGame();
+        initialWallColor = walls.GetColor(new Vector3Int(0, 0, 0));
+        foreach (var ghost in ghosts)
+        {
+            Color color = ghost.transform.Find("Body").GetComponent<SpriteRenderer>().color;
+            initialGhostColors.Add(color);
+        }
     }
 
     // Update is called once per frame
@@ -193,15 +205,69 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void PowerPelletEaten(PowerPellet pellet)
+    public void FrightenedMode(PowerPellet pellet)
     {
-        for (int i = 0; i < this.ghosts.Length; i++)
+        Thawing();
+        txtPowerup.text = "FRIGHTENED";
+        foreach (var ghost in this.ghosts)
         {
-            this.ghosts[i].frightened.Enable(pellet.duration);
+            ghost.frightened.Enable(pellet.duration);
         }
         PelletEaten(pellet);
         CancelInvoke();
         Invoke(nameof(ResetGhostMultiplier), pellet.duration);
+    }
+
+    public void FreezeMode(PowerPellet pellet)
+    {
+        txtPowerup.text = "FREEZE";
+        Color freezeColor = new Color(135f / 255f, 206f / 255f, 235f / 255f);
+        BoundsInt bounds = walls.cellBounds;
+        foreach (var position in bounds.allPositionsWithin)
+        {
+            TileBase tile = walls.GetTile(position);
+            if (tile != null)
+            {
+                walls.SetColor(position, freezeColor);
+            }
+        }
+        for (int i = 0; i < ghosts.Length; i++)
+        {
+            ghosts[i].transform.Find("Body").GetComponent<SpriteRenderer>().color = freezeColor;
+            ghosts[i].movement.speed = 0;
+            ghosts[i].GetComponent<CircleCollider2D>().isTrigger = true;
+            if (ghosts[i].home.enabled)
+            {
+                float remainingDuration = ghosts[i].home.duration;
+                ghosts[i].home.Enable(pellet.duration);
+            }else if (ghosts[i].frightened.enabled)
+            {
+                ghosts[i].frightened.Disable();
+            }
+        }
+        PelletEaten(pellet);
+        CancelInvoke();
+        Invoke(nameof(Thawing), pellet.duration);
+    }
+
+    public void Thawing()
+    {
+        txtPowerup.text = "";
+        BoundsInt bounds = walls.cellBounds;
+        foreach (var position in bounds.allPositionsWithin)
+        {
+            TileBase tile = walls.GetTile(position);
+            if (tile != null)
+            {
+                walls.SetColor(position, initialWallColor);
+            }
+        }
+        for (int i = 0; i < ghosts.Length; i++)
+        {
+            ghosts[i].transform.Find("Body").GetComponent<SpriteRenderer>().color = initialGhostColors[i];
+            ghosts[i].movement.speed = 0.1f;
+            ghosts[i].GetComponent<CircleCollider2D>().isTrigger = false;
+        }
     }
 
     private bool HasRemainingDiamonds()
@@ -218,6 +284,7 @@ public class GameManager : MonoBehaviour
 
     private void ResetGhostMultiplier()
     {
+        txtPowerup.text = "";
         ghostMultiplier = 1;
     }
 
