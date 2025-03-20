@@ -30,6 +30,8 @@ public class GameManager : MonoBehaviour
     public int lives { get; private set; }
     public int remainingDiamonds { get; private set; }
     public int level { get; private set; }
+    private bool doubleScore = false;
+    public Image doubleScoreImage;
 
     public Tilemap walls;
     private Color initialWallColor;
@@ -95,6 +97,7 @@ public class GameManager : MonoBehaviour
         initialLevelScore = score;
         SetDiamonds(diamonds.childCount);
         ResetGhostMultiplier();
+        ResetDoubleScore();
         pacman.ResetState();
         for (int i = 0; i < ghosts.Length; i++)
         {
@@ -123,7 +126,7 @@ public class GameManager : MonoBehaviour
     private void SetScore(int score)
     {
         int previousScore = this.score;
-        this.score = score;
+        this.score = score + (doubleScore ? (score - previousScore) : 0);
         txtPoint.text = "POINT: " + score.ToString();
         if (score / 10000 > previousScore / 10000)
         {
@@ -207,6 +210,8 @@ public class GameManager : MonoBehaviour
 
     public void FrightenedMode(PowerPellet pellet)
     {
+        CancelInvoke(nameof(Thawing));
+        CancelInvoke(nameof(ResetGhostMultiplier));
         Thawing();
         txtPowerup.text = "FRIGHTENED";
         foreach (var ghost in this.ghosts)
@@ -214,12 +219,13 @@ public class GameManager : MonoBehaviour
             ghost.frightened.Enable(pellet.duration);
         }
         PelletEaten(pellet);
-        CancelInvoke();
         Invoke(nameof(ResetGhostMultiplier), pellet.duration);
     }
 
     public void FreezeMode(PowerPellet pellet)
     {
+        CancelInvoke(nameof(Thawing));
+        CancelInvoke(nameof(ResetGhostMultiplier));
         txtPowerup.text = "FREEZE";
         Color freezeColor = new Color(135f / 255f, 206f / 255f, 235f / 255f);
         BoundsInt bounds = walls.cellBounds;
@@ -246,7 +252,6 @@ public class GameManager : MonoBehaviour
             }
         }
         PelletEaten(pellet);
-        CancelInvoke();
         Invoke(nameof(Thawing), pellet.duration);
     }
 
@@ -268,6 +273,23 @@ public class GameManager : MonoBehaviour
             ghosts[i].movement.speed = 0.1f;
             ghosts[i].GetComponent<CircleCollider2D>().isTrigger = false;
         }
+    }
+
+    public void DoubleScore(PowerPellet pellet)
+    {
+        CancelInvoke(nameof(ResetDoubleScore));
+        txtPowerup.text = "DOUBLE SCORE";
+        doubleScore = true;
+        doubleScoreImage.gameObject.SetActive(true);
+        Invoke(nameof(ResetDoubleScore), pellet.duration);
+        PelletEaten(pellet);
+    }
+
+    public void ResetDoubleScore()
+    {
+        txtPowerup.text = "";
+        doubleScore = false;
+        doubleScoreImage.gameObject.SetActive(false);
     }
 
     private bool HasRemainingDiamonds()
